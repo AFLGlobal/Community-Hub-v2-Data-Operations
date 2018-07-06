@@ -138,7 +138,7 @@ namespace Conversion.Data.v2
             {
                 entity.Property(e => e.ServiceTypeId).HasColumnName("ServiceTypeID");
 
-                entity.Property(e => e.ServiceType1)
+                entity.Property(e => e.ServiceTypeValue)
                     .IsRequired()
                     .HasColumnName("ServiceType");
             });

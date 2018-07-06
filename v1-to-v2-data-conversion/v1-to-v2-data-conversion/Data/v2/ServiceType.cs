@@ -11,7 +11,7 @@ namespace Conversion.Data.v2
         }
 
         public long ServiceTypeId { get; set; }
-        public string ServiceType1 { get; set; }
+        public string ServiceTypeValue { get; set; }
 
         public ICollection<Project> Project { get; set; }
     }
