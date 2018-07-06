@@ -1,11 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-
-using System.Collections.Generic;
 
 namespace Conversion.Data.v1
 {
