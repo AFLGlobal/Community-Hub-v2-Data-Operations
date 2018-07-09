@@ -10,10 +10,10 @@ namespace Conversion.Data.v2
             WorkOpportunityForEmployee = new HashSet<WorkOpportunityForEmployee>();
         }
 
-        public long EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
         public string EmployeeFirstName { get; set; }
         public string EmployeeLastName { get; set; }
-        public long LocationId { get; set; }
+        public int LocationId { get; set; }
         public string EmployeeEmail { get; set; }
         public string EmployeePhone { get; set; }
         public string EmployeeCellPhone { get; set; }

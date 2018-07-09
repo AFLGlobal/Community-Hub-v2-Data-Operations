@@ -10,7 +10,7 @@ namespace Conversion.Data.v2
             Project = new HashSet<Project>();
         }
 
-        public long ServiceTypeId { get; set; }
+        public int ServiceTypeId { get; set; }
         public string ServiceTypeValue { get; set; }
 
         public ICollection<Project> Project { get; set; }

@@ -10,16 +10,16 @@ namespace Conversion.Data.v2
             WorkOpportunity = new HashSet<WorkOpportunity>();
         }
 
-        public long ProjectId { get; set; }
-        public long LocationId { get; set; }
+        public int ProjectId { get; set; }
+        public int LocationId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
         public bool TshirtRequired { get; set; }
         public bool Completed { get; set; }
         public bool Deleted { get; set; }
         public DateTime? DateEmailSent { get; set; }
-        public long WaiverId { get; set; }
-        public long ServiceTypeId { get; set; }
+        public int WaiverId { get; set; }
+        public int ServiceTypeId { get; set; }
 
         public Location Location { get; set; }
         public ServiceType ServiceType { get; set; }

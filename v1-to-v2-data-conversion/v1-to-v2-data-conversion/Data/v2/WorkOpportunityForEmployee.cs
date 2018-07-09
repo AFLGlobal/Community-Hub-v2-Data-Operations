@@ -5,9 +5,9 @@ namespace Conversion.Data.v2
 {
     public partial class WorkOpportunityForEmployee
     {
-        public long WorkOpportunityForEmployeeId { get; set; }
-        public long EmployeeId { get; set; }
-        public long WorkOpportunityId { get; set; }
+        public int WorkOpportunityForEmployeeId { get; set; }
+        public int EmployeeId { get; set; }
+        public int WorkOpportunityId { get; set; }
         public DateTime EmployeeDateSignedUp { get; set; }
         public double ActualHours { get; set; }
         public string Comments { get; set; }

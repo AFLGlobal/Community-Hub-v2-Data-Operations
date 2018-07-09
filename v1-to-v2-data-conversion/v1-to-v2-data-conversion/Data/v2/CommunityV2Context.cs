@@ -74,7 +74,7 @@ namespace Conversion.Data.v2
                 entity.Property(e => e.MId).HasColumnName("M_ID");
 
                 entity.Property(e => e.Title)
-                    .HasColumnName("TItle")
+                    .HasColumnName("Title")
                     .HasMaxLength(100);
 
                 entity.HasOne(d => d.Location)
@@ -118,18 +118,21 @@ namespace Conversion.Data.v2
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.Project)
                     .HasForeignKey(d => d.LocationId)
+                    .IsRequired(false)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_43");
 
                 entity.HasOne(d => d.ServiceType)
                     .WithMany(p => p.Project)
                     .HasForeignKey(d => d.ServiceTypeId)
+                    .IsRequired(false)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_62");
 
                 entity.HasOne(d => d.Waiver)
                     .WithMany(p => p.Project)
                     .HasForeignKey(d => d.WaiverId)
+                    .IsRequired(false)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_53");
             });

@@ -10,7 +10,7 @@ namespace Conversion.Data.v2
             Project = new HashSet<Project>();
         }
 
-        public long WaiverId { get; set; }
+        public int WaiverId { get; set; }
         public string WaiverText { get; set; }
         public string WaiverUrl { get; set; }
 

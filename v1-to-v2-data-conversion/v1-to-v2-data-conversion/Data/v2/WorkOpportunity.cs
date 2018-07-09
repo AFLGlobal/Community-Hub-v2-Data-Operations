@@ -10,8 +10,8 @@ namespace Conversion.Data.v2
             WorkOpportunityForEmployee = new HashSet<WorkOpportunityForEmployee>();
         }
 
-        public long WorkOpportunityId { get; set; }
-        public long ProjectId { get; set; }
+        public int WorkOpportunityId { get; set; }
+        public int ProjectId { get; set; }
         public DateTime WorkOpportunityStartDateTime { get; set; }
         public DateTime WorkOpportunityStopDateTime { get; set; }
         public double WorkOpportunityHours { get; set; }
