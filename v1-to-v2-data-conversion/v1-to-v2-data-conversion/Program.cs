@@ -228,6 +228,87 @@ namespace v1_to_v2_data_conversion
 
                 #endregion
 
+                #region WORK_OPPORTUNITY
+
+                Console.Clear();
+
+                Console.WriteLine("Converting Work Opportunities");
+                Console.WriteLine("===================");
+
+                int _woConversionCount = 0;
+
+                foreach (Conversion.Data.v1.WorkOpportunities v1WO in _ctxV1.WorkOpportunities)
+                {
+                    Console.Write("Converting Work Opportunity: {0}...", v1WO.Description);
+
+                    // Get Project from V1 Work Opp THEN get V2 equivalent
+                    Conversion.Data.v2.Project _v2Project = new Conversion.Data.v2.Project();
+                    Conversion.Data.v1.Projects _v1Project = new Conversion.Data.v1.Projects();
+
+                    if (v1WO.WorkOpportunityId == 148)
+                    {
+                        int marker = 0;
+                    }
+
+                    try
+                    {
+                        _v1Project = _ctxV1.Projects.Where(proj => proj.ProjectId == v1WO.ProjectId).First();
+                        _v2Project = _ctxV2.Project.Where(proj => proj.ProjectDescription.Contains(_v1Project.ProjectDescription) && proj.ProjectName.Contains(_v1Project.ProjectName)).First();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("failed!");
+                        continue;                        
+                    }
+
+                    double _woHours = 0;
+                    DateTime _woStart = DateTime.MinValue, _woEnd = DateTime.MinValue;
+
+                    if (v1WO.Wohours != null)
+                    {
+                        _woHours = (double)v1WO.Wohours;
+                    }
+
+                    if (v1WO.WostartDateTime != null)
+                    {
+                        _woStart = (DateTime)v1WO.WostartDateTime;
+                    }
+
+                    if(v1WO.WoendDateTime!=null)
+                    {
+                        _woEnd = (DateTime)v1WO.WoendDateTime;
+                    }
+
+                    Conversion.Data.v2.WorkOpportunity _v2WO = new Conversion.Data.v2.WorkOpportunity()
+                    {
+                        AllowGuests = v1WO.AllowGuests,
+                        Description = v1WO.Description,
+                        LunchAvailable = v1WO.LunchAvailable,
+                        MaxVolunteers = v1WO.MaxVolunteers,
+                        ProjectId = _v2Project.ProjectId,
+                        WorkOpportunityHours = _woHours,
+                        WorkOpportunityStartDateTime = _woStart,
+                        WorkOpportunityStopDateTime = _woEnd
+                    };
+
+                    try
+                    {
+                        _ctxV2.SaveChanges();
+                        Console.WriteLine("success!");
+                        _woConversionCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("failed!");
+                    }
+                }
+
+                Console.WriteLine(String.Format("Converted {0} of {1} Work Opportunities", _woConversionCount.ToString(), _ctxV1.WorkOpportunities.Count().ToString()));
+                Console.WriteLine("Press any key to continue");
+                Console.ReadLine();
+
+                #endregion
+
                 //#region EMPLOYEE
                 //Console.Clear();
 
