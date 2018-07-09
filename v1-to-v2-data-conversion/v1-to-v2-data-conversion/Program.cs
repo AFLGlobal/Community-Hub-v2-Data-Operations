@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Conversion.Data;
+using System.Globalization;
+
 
 using System.Linq;
 
@@ -245,11 +247,6 @@ namespace v1_to_v2_data_conversion
                     Conversion.Data.v2.Project _v2Project = new Conversion.Data.v2.Project();
                     Conversion.Data.v1.Projects _v1Project = new Conversion.Data.v1.Projects();
 
-                    if (v1WO.WorkOpportunityId == 148)
-                    {
-                        int marker = 0;
-                    }
-
                     try
                     {
                         _v1Project = _ctxV1.Projects.Where(proj => proj.ProjectId == v1WO.ProjectId).First();
@@ -291,6 +288,8 @@ namespace v1_to_v2_data_conversion
                         WorkOpportunityStopDateTime = _woEnd
                     };
 
+                    _ctxV2.WorkOpportunity.Add(_v2WO);
+
                     try
                     {
                         _ctxV2.SaveChanges();
@@ -308,6 +307,130 @@ namespace v1_to_v2_data_conversion
                 Console.ReadLine();
 
                 #endregion
+
+                #region EMPLOYEE
+
+                Console.Clear();
+
+                Console.WriteLine("Converting Employees");
+                Console.WriteLine("==================");
+
+                int _employeeConversionCount = 0;
+                int _idxEmployeeNumber = 1;
+
+                TextInfo _textInfo = new CultureInfo("en-US", false).TextInfo;
+
+                foreach (Conversion.Data.v1.Employees v1Employee in _ctxV1.Employees)
+                {
+                    Console.Write(String.Format("{1}: Converting Employee: {0}...", v1Employee.EmpFirst + " " + v1Employee.EmpLast, _idxEmployeeNumber));
+
+                    if (v1Employee.EmpFirst.Length > 0 && v1Employee.EmpLast.Length > 0 && v1Employee.EmpEmail.Length > 0)
+                    {
+                        // Get Location
+                        int _locId = 1;
+
+                        if (v1Employee.LocationId != null)
+                        {
+                            if (v1Employee.LocationId == 0)
+                            {
+                                _locId = 1;
+                            }
+                            else
+                            {
+                                Conversion.Data.v1.Locations _tempV1Loc = _ctxV1.Locations.Where(l => l.LocationId == v1Employee.LocationId).First();
+                                Conversion.Data.v2.Location _tempV2Loc = _ctxV2.Location.Where(l => l.LocationName == _tempV1Loc.LocName && l.LocationCountry == _tempV1Loc.LocCountry).First();
+                                _locId = _tempV2Loc.LocationId;
+                            }
+                        }
+
+                        bool _isAdmin = false;
+                        bool _canCreate = false;
+                        bool _isLocked = false;
+                        DateTime _lastAccess = Convert.ToDateTime("1/1/1900");
+
+                        try
+                        {
+                            Conversion.Data.v1.Accounts _tempV1Account = _ctxV1.Accounts.Where(acct => acct.EmployeeId == v1Employee.EmployeeId).First();
+                            _isAdmin = _tempV1Account.IsAdmin;
+                            _canCreate = _tempV1Account.CanCreate;
+                            _isLocked = _tempV1Account.IsLocked;
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+                        if (v1Employee.EmpMiddle == null)
+                        {
+                            v1Employee.EmpMiddle = "";
+                        }
+
+                        Conversion.Data.v2.Employee v2Employee = new Conversion.Data.v2.Employee()
+                        {
+                            EmployeeFirstName = _textInfo.ToTitleCase(v1Employee.EmpFirst.ToLower()),
+                            EmployeeLastName = _textInfo.ToTitleCase(v1Employee.EmpLast.ToLower()),
+                            LocationId = _locId,
+                            EmployeeEmail = v1Employee.EmpEmail,
+                            EmployeePhone = v1Employee.EmpPhone,
+                            EmployeeCellPhone = v1Employee.EmpCell,
+                            Title = v1Employee.Title,
+                            EmployeeMiddleName = _textInfo.ToTitleCase(v1Employee.EmpMiddle.ToLower()),
+                            EmployeeAlternateEmail = v1Employee.EmpAltEmail,
+                            EmployeeStreet = v1Employee.EmpStreet,
+                            EmployeeCity = v1Employee.EmpCity,
+                            EmployeeState = v1Employee.EmpState,
+                            EmployeeZip = v1Employee.EmpPostal,
+                            EmployeePayGroup = v1Employee.EmpPayGroup,
+                            MId = v1Employee.Mid,
+                            IsAdmin = _isAdmin,
+                            IsLocked = _isLocked,
+                            LastAccessDateTime = _lastAccess,
+                            CanCreate = _canCreate,
+                            AdminCommunityService = _isAdmin,
+                            AdminAssociateManagement = _isAdmin,
+                            AdminReporting = _isAdmin,
+                            AdminUnitedWay = _isAdmin,
+                            UseActiveDirectory = false,
+                            EmployeePassword = "",
+                            Deleted = v1Employee.Deleted,
+                        };
+
+                        // See if email already exists and kick out new addition
+                        try
+                        {
+                            Conversion.Data.v2.Employee _testEmployee = _ctxV2.Employee.Where(emp => emp.EmployeeEmail.ToLower() == v2Employee.EmployeeEmail.ToLower()).First();
+                            Console.WriteLine("skipped!");
+                        }
+                        catch(Exception ex)
+                        {
+                            _ctxV2.Employee.Add(v2Employee);
+
+                            try
+                            {
+                                _ctxV2.SaveChanges();
+                                Console.WriteLine("success!");
+                                _employeeConversionCount++;
+                            }
+                            catch (Exception ex1)
+                            {
+                                Console.WriteLine("failed!");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("skipped!");
+                    }
+
+                    _idxEmployeeNumber++;
+                }
+
+                Console.WriteLine(String.Format("Converted {0} of {1} Employees", _employeeConversionCount.ToString(), _ctxV1.Employees.Count().ToString()));
+                Console.WriteLine("Press any key to continue");
+                Console.ReadLine();
+
+                #endregion
+
 
                 //#region EMPLOYEE
                 //Console.Clear();
