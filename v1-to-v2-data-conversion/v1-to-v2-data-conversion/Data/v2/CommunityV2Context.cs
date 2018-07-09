@@ -103,6 +103,10 @@ namespace Conversion.Data.v2
 
                 entity.Property(e => e.DateEmailSent).HasColumnType("datetime");
 
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
 
                 entity.Property(e => e.ProjectDescription).HasColumnType("text");
