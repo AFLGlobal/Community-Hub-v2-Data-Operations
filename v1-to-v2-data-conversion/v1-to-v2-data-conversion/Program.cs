@@ -15,6 +15,8 @@ namespace v1_to_v2_data_conversion
             Conversion.Data.v1.communityContext _ctxV1 = new Conversion.Data.v1.communityContext();
             Conversion.Data.v2.CommunityV2Context _ctxV2 = new Conversion.Data.v2.CommunityV2Context();
 
+            List<Conversion.Data.v1.EmployeeWork> _testList = _ctxV1.EmployeeWork.ToList();
+
             Console.Clear();
             Console.WriteLine("AFL Global Community Hub Data Conversion Tool v0.1");
             Console.WriteLine("==================================================");
@@ -431,46 +433,80 @@ namespace v1_to_v2_data_conversion
 
                 #endregion
 
+                #region  EMPLOYEE_WORK_OPPORTUNITIES
 
-                //#region EMPLOYEE
-                //Console.Clear();
+                Console.Clear();
 
-                //Console.WriteLine("Converting Employees");
-                //Console.WriteLine("====================");
+                Console.WriteLine("Converting Employee Work Opportunities");
+                Console.WriteLine("======================================");
 
-                //int _employeeConversionCount = 0;
+                int _employeeWOConversionCount = 0;
 
-                //foreach (Conversion.Data.v1.Employees v1Employee in _ctxV1.Employees)
-                //{
+                foreach (Conversion.Data.v1.EmployeeWork _employeeWork in _ctxV1.EmployeeWork)
+                {
+                    Console.Write(String.Format("Converting Work Opportunity For Employee: {0}...", _employeeWork.WorkOpportunityID));
 
-                //}
+                    // Get V2 Work Opportunity and Employee
+                    int _employeeId = _employeeWork.EmployeeId;
+                    int _workOppId = _employeeWork.WorkOpportunityID;
 
-                //#endregion
+                    try
+                    {
+                        // If at any point this fails, then V1 or V2 employee work opp doesn't exist, so skip
+                        Conversion.Data.v1.Employees _v1Employee = _ctxV1.Employees.Where(emp => emp.EmployeeId == _employeeId).First();
+                        Conversion.Data.v1.WorkOpportunities _v1WorkOpp = _ctxV1.WorkOpportunities.Where(wo => wo.WorkOpportunityId == _workOppId).First();
 
-                //var employees = _ctx.Employees;
-                //int idx = 1;
+                        Conversion.Data.v2.Employee _v2Employee = _ctxV2.Employee.Where(emp => emp.EmployeeEmail.ToLower() == _v1Employee.EmpEmail.ToLower()).First();
+                        Conversion.Data.v2.WorkOpportunity _v2WorkOpp = _ctxV2.WorkOpportunity.Where(wo => wo.Description.Contains(_v1WorkOpp.Description) && wo.WorkOpportunityStartDateTime == _v1WorkOpp.WostartDateTime && wo.WorkOpportunityStopDateTime == _v1WorkOpp.WoendDateTime).First();
 
-                //List<Conversion.Data.v1.EmployeeWork> employee_work = _ctx.EmployeeWork.ToList();
+                        _employeeId = _v2Employee.EmployeeId;
+                        _workOppId = _v2WorkOpp.WorkOpportunityId;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("skipped!");
+                        continue;
+                    }
 
-                //foreach(var employee in employees)
-                //{
-                //    Console.WriteLine(idx + ": " + employee.EmpLast);
-                //    idx++;
+                    int _actualHours = 0;
+                   
+                    if (_employeeWork.ActualHours!=null)
+                    {
+                        _actualHours = Convert.ToInt32(_employeeWork.ActualHours);
+                    }
 
-                //    try
-                //    {
-                //        List<Conversion.Data.v1.EmployeeWork> employeework = _ctx.EmployeeWork.Where(x => x.EmployeeId == employee.EmployeeId).ToList();
+                    Conversion.Data.v2.WorkOpportunityForEmployee _newWOForEmployee = new Conversion.Data.v2.WorkOpportunityForEmployee()
+                    {
+                        ActualHours = _actualHours,
+                        Comments = _employeeWork.Comments,
+                        EmployeeDateSignedUp = _employeeWork.EmpSignedUp,
+                        Guests = _employeeWork.Guests,
+                        EmployeeId = _employeeId,
+                        WorkOpportunityId = _workOppId,
+                        TshirtSize = _employeeWork.NeedsTShirt,
+                        WantsLunch = _employeeWork.WantsLunch
+                    };
 
-                //        if (employeework.Count > 0)
-                //        {
-                //            Console.WriteLine("Found Some work!");
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
+                    _ctxV2.WorkOpportunityForEmployee.Add(_newWOForEmployee);
 
-                //    }
-                //}
+                    try
+                    {
+                        _employeeConversionCount++;
+                        _ctxV2.SaveChanges();
+                        Console.WriteLine("success!");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("failed!");
+                    }
+
+                }
+
+                Console.WriteLine(String.Format("Converted {0} of {1} Employee Work Opportunities", _employeeWOConversionCount.ToString(), _ctxV1.EmployeeWork.Count().ToString()));
+                Console.WriteLine("Press any key to continue");
+                Console.ReadLine();
+
+                #endregion
             }
 
             Console.ReadLine();
