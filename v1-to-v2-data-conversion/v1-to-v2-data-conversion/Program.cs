@@ -170,7 +170,7 @@ namespace v1_to_v2_data_conversion
                     Console.Write("Converting Project: {0}...", v1Project.ProjectName);
 
                     // Get Location, Service Type and Waiver IDs
-                    if (v1Project.LocationId != null)
+                    if (v1Project.LocationId != null && v1Project.LocationId != 0)
                     {
                         Conversion.Data.v1.Locations _tempV1Loc = _ctxV1.Locations.Where(l => l.LocationId == v1Project.LocationId).First();
                         Conversion.Data.v2.Location _tempV2Loc = _ctxV2.Location.Where(l => l.LocationName == _tempV1Loc.LocName && l.LocationCountry == _tempV1Loc.LocCountry).First();
@@ -178,7 +178,7 @@ namespace v1_to_v2_data_conversion
                         _locId = _tempV2Loc.LocationId;
                     }
 
-                    if (v1Project.ServiceTypeId != null)
+                    if (v1Project.ServiceTypeId != null && v1Project.ServiceTypeId != 0)
                     {
                         Conversion.Data.v1.ServiceTypes _tempV1ST = _ctxV1.ServiceTypes.Where(st => st.ServiceTypeId == v1Project.ServiceTypeId).First();
                         Conversion.Data.v2.ServiceType _tempV2ST = _ctxV2.ServiceType.Where(st => st.ServiceTypeValue == _tempV1ST.ServiceType).First();
@@ -395,6 +395,7 @@ namespace v1_to_v2_data_conversion
                             UseActiveDirectory = false,
                             EmployeePassword = "",
                             Deleted = v1Employee.Deleted,
+                            LDAPEmployeeId = 0
                         };
 
                         // See if email already exists and kick out new addition

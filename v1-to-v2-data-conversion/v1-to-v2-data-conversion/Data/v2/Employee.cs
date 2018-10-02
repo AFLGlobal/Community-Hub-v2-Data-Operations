@@ -37,6 +37,7 @@ namespace Conversion.Data.v2
         public bool AdminReporting { get; set; }
         public bool UseActiveDirectory { get; set; }
         public string EmployeePassword { get; set; }
+        public int LDAPEmployeeId { get; set; }
 
         public Location Location { get; set; }
         public ICollection<WorkOpportunityForEmployee> WorkOpportunityForEmployee { get; set; }
